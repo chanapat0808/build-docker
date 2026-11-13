@@ -4,17 +4,12 @@ pipeline {
     // environment {
     //     DOCKERHUB = credential
     // }
-
-    environment {
-        DOCKER_IMG = "test_img"
-    }
-
-    withCredentials([
-        usernamePassword(
-        credentialsId: 'dockerhub',
-        usernameVariable: 'DOCKER_USERNAME',
-        passwordVariable: 'DOCKER_PASSWORD')
-    ])
+    // withCredentials([
+    //     usernamePassword(
+    //     credentialsId: 'dockerhub',
+    //     usernameVariable: 'DOCKER_USERNAME',
+    //     passwordVariable: 'DOCKER_PASSWORD')
+    // ])
     
     stages{
         stage('test'){
@@ -32,7 +27,7 @@ pipeline {
             steps{
                 sh '''
                 cd frontend
-                docker build -t $DOCKER_IMG -f frontend/Dockerfile
+                docker build -t test_image -f frontend/Dockerfile
                 '''
             }
         }
