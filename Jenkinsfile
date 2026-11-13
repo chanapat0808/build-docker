@@ -1,5 +1,5 @@
-pipeline [
-    agent any 
+pipeline {
+    agent any
 
     // environment {
     //     DOCKERHUB = credential
@@ -37,4 +37,4 @@ pipeline [
             }
         }
     }
-]
+}
