@@ -9,12 +9,12 @@ pipeline {
     // environment {
         
     // }
-    // withCredentials([
-    //     usernamePassword(
-    //     credentialsId: 'dockerhub',
-    //     usernameVariable: 'DOCKER_USERNAME',
-    //     passwordVariable: 'DOCKER_PASSWORD')
-    // ])
+    withCredentials([
+        usernamePassword(
+        credentialsId: 'dockerhub',
+        usernameVariable: 'DOCKER_USERNAME',
+        passwordVariable: 'DOCKER_PASSWORD')
+    ])
 
         
     
@@ -40,6 +40,15 @@ pipeline {
                 sh '''
                 cd frontend
                 docker build -t $DOCKER_IMG .
+                '''
+            }
+        }
+
+        stage("push"){
+            steps{
+                sh '''
+                echo "$DOCKER_PASSWORD" docker login -u $DOCKER_USERNAME --password-stdin
+                docker push 
                 '''
             }
         }
