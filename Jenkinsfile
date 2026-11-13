@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image "node:alpine"
-        }
-    }
+    agent any
 
     // environment {
     //     DOCKERHUB = credential
@@ -17,6 +13,11 @@ pipeline {
     
     stages{
         stage('test'){
+            agent {
+                docker {
+                    image "node:alpine"; resuseNode true
+                }
+            }
             steps{
                 sh ''' 
                 cd frontend
