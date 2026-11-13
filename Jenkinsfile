@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB = credentials('dockerhub')
-        DOCKER_IMG = "$DOCKERHUB/my-test-app"
+        DOCKER_IMG = "my-test-app"
     }
 
 
@@ -40,7 +40,7 @@ pipeline {
             steps{
                 sh '''
                 cd frontend
-                docker build -t $DOCKER_IMG .
+                docker build -t $DOCKERHUB_USR/$DOCKER_IMG .
                 '''
             }
         }
@@ -49,7 +49,7 @@ pipeline {
             steps{
                 sh '''
                 echo "$DOCKERHUB_PSW" | docker login -u $DOCKERHUB_USR --password-stdin
-                docker push $DOCKER_IMG
+                docker push $DOCKERHUB_USR/$DOCKER_IMG
                 '''
             }
         }
