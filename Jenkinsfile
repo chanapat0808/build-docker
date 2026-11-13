@@ -3,18 +3,19 @@ pipeline {
 
     environment {
         DOCKER_IMG = "my-test"
+        DOCKERHUB = credentials('dockerhub')
     }
 
 
     // environment {
         
     // }
-    withCredentials([
-        usernamePassword(
-        credentialsId: 'dockerhub',
-        usernameVariable: 'DOCKER_USERNAME',
-        passwordVariable: 'DOCKER_PASSWORD')
-    ])
+    // withCredentials([
+    //     usernamePassword(
+    //     credentialsId: 'dockerhub',
+    //     usernameVariable: 'DOCKER_USERNAME',
+    //     passwordVariable: 'DOCKER_PASSWORD')
+    // ])
 
         
     
@@ -48,7 +49,7 @@ pipeline {
             steps{
                 sh '''
                 echo "$DOCKER_PASSWORD" docker login -u $DOCKER_USERNAME --password-stdin
-                docker push 
+                docker push $DOCKER_IMG:latest
                 '''
             }
         }
