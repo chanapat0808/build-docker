@@ -48,7 +48,7 @@ pipeline {
         stage("push"){
             steps{
                 sh '''
-                echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin
+                echo "$DOCKERHUB_PSW" | docker login -u $DOCKERHUB_USR --password-stdin
                 docker push $DOCKER_IMG:latest
                 '''
             }
