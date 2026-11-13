@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMG = "my-test"
+    }
+
 
     // environment {
         
@@ -35,7 +39,7 @@ pipeline {
             steps{
                 sh '''
                 cd frontend
-                docker build -t test_image .
+                docker build -t $DOCKER_IMG .
                 '''
             }
         }
