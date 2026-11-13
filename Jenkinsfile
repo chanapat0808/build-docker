@@ -6,15 +6,15 @@ pipeline {
     // }
 
     environment {
-        DOCKER_IMG = "TEST_IMAGE"
-        
-        withCredentials([
+        DOCKER_IMG = "test_img"
+    }
+
+    withCredentials([
         usernamePassword(
         credentialsId: 'dockerhub',
         usernameVariable: 'DOCKER_USERNAME',
         passwordVariable: 'DOCKER_PASSWORD')
     ])
-    }
     
     stages{
         stage('test'){
