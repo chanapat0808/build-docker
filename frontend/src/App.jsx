@@ -1,0 +1,363 @@
+import { use, useEffect, useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from './assets/vite.svg'
+import heroImg from './assets/hero.png'
+import './App.css'
+import Login from '../src/pages/Login'
+import Register from '../src/pages/Register'
+import Page from '../src/pages/Page'
+import Navbar from './components/Navbar'
+import Upload from './pages/Upload'
+import ResumeForm from './pages/ResumeForm'
+import UploadProfile from './pages/UploadProfile'
+import Landingpage from '../src/pages/Landingpage'
+import RoleRequest from "./pages/RoleRequest";
+import AdminRoleRequests from "./pages/AdminRoleRequests";
+import EditProfile from "./pages/EditProfile";
+import ProtectedRoute from "./components/ProtectedRoute";
+import MyResumes from "./pages/Myresumes";
+import { Route, Routes, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+
+function App() {
+  const navigate = useNavigate();
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [isUploadProfileOpen, setIsUploadProfileOpen] = useState (false);
+  const [user, setUser] = useState(null);
+  const [isUserLoading, setIsUserLoading] = useState(true);
+  const [isResumeFormOpen, setIsResumeFormOpen] = useState(false);
+  const [resumeData, setResumeData] = useState(null);
+  const [getData, setGetData] = useState([]);
+  const [results, setResults] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [searchParams, setSearchParams] = useState({
+    q: "",
+    languages: [],
+    experience: [],
+  })
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const PAGE_SIZE = 6;
+  // const isLandingPage = location.pathname === '/';
+
+  // console.log("For results",results);
+  // console.log("For getData",getData);
+
+
+
+  const fetchUserData = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setUser(null);
+      setIsUserLoading(false);
+      return null;
+    }
+
+    setIsUserLoading(true);
+
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/users/me",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const userData = response.data?.data ?? response.data;
+      setUser(userData);
+
+      return userData;
+    } catch (error) {
+      console.error("Fetch user error:", error);
+
+      localStorage.removeItem("token");
+      setUser(null);
+
+      return null;
+    } finally {
+      setIsUserLoading(false);
+    }
+  };
+
+
+
+  const fetchResumeData = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setGetData([]);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/resume",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setGetData(response.data);
+    } catch (err) {
+      console.error("Fetch Get Data Error", err);
+    }
+  };
+
+  const fetchLatest = async (p = 1) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setResults([]);
+      setTotal(0);
+      setPage(1);
+      setHasSearched(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/resumes/latest?page=${p}&limit=${PAGE_SIZE}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setResults(response.data.data);
+      setTotal(response.data.total);
+      setPage(p);
+      setHasSearched(false);
+    } catch (err) {
+      console.error("Fetch latest error", err);
+    }
+  };
+
+
+  const searchResume = async () => {
+    const isEmpty =
+      !searchParams.q.trim() && searchParams.languages.length === 0;
+
+    if (isEmpty) return fetchLatest(1);
+
+    try {
+      const params = new URLSearchParams();
+      if (searchParams.q.trim()) params.append("q", searchParams.q.trim());
+      if (searchParams.languages.length) {
+        params.append("languages", searchParams.languages.join(","));
+      }
+
+      const token = localStorage.getItem('token');
+      const response = await axios.get(
+        `http://localhost:3000/api/resumes/search?${params.toString()}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setResults(response.data.data);
+      setTotal(response.data.data.length);
+      setPage(1);
+      setHasSearched(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      const userData = await fetchUserData();
+
+      if (userData) {
+        await fetchResumeData();
+        await fetchLatest(1);
+      } else {
+        setGetData([]);
+        setResults([]);
+        setTotal(0);
+      }
+    };
+
+    initializeApp();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+
+    setUser(null);
+    setResumeData(null);
+    setGetData([]);
+    setResults([]);
+    setTotal(0);
+    setPage(1);
+    setHasSearched(false);
+
+    setSearchParams({
+      q: "",
+      languages: [],
+      experience: [],
+    });
+
+    setIsSignInOpen(false);
+    setIsSignUpOpen(false);
+    setIsUploadOpen(false);
+    setIsUploadProfileOpen(false);
+    setIsResumeFormOpen(false);
+
+    navigate("/", { replace: true });
+  };
+
+  
+const handleLoginSuccess = async () => {
+  setIsSignInOpen(false);
+
+  const userData = await fetchUserData();
+
+  if (!userData) {
+    return;
+  }
+
+  await fetchResumeData();
+  await fetchLatest(1);
+
+  navigate("/", { replace: true });
+};
+
+
+
+  const handlePageChange = (p) => {
+  if (hasSearched) setPage(p);   // search: หั่นฝั่ง frontend
+  else fetchLatest(p);           // latest: ดึงจาก backend
+};
+
+const handleLandingSearch = (q) => {
+  const next = { ...searchParams, q };
+  setSearchParams(next);
+  navigate("/search");
+  searchResume(next);
+};
+
+  return (
+    <div className='App'>
+      <Navbar
+        onSignInClick={() => setIsSignInOpen(true)}
+        onSignUpClick={() => setIsSignUpOpen(true)}
+        onUploadClick={() => setIsUploadOpen(true)}
+        onUploadProfileClick={() => setIsUploadProfileOpen(true)}
+        user={user}
+        onLogout={handleLogout}
+      />
+      {isSignInOpen && 
+        (<Login 
+          onClose={() => setIsSignInOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+          onSwitchToSingUp={() =>{
+            setIsSignInOpen(false);
+            setIsSignUpOpen(true);
+          }}
+        />
+      )}
+      {isSignUpOpen &&
+        (<Register
+          onClose={() => setIsSignUpOpen(false)}
+          onSwitchToSignIn={() =>{
+            setIsSignInOpen(true)
+            setIsSignUpOpen(false)
+          }}
+        />
+      )}
+      {isUploadOpen &&
+      (<Upload
+        onClose={() => setIsUploadOpen(false)}
+        onUploadSuccess={(data) =>{
+          setResumeData(data)
+          setIsUploadOpen(false)
+          setIsResumeFormOpen(true)
+          fetchResumeData()
+        }}
+        />)
+
+      }
+      {isUploadProfileOpen &&
+      (<UploadProfile
+        onClose={() => setIsUploadProfileOpen(false)}
+        onSaveSuccess={() => {
+          // fetchResumeData();
+          fetchUserData();
+        }}
+       />
+      )
+      }
+
+      {isResumeFormOpen &&
+      (<ResumeForm
+      onClose={() => setIsResumeFormOpen(false)}
+      initialData={resumeData}
+      onSaveSuccess={fetchResumeData}
+      />)
+      }
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Landingpage
+              user={user}
+              loading={isUserLoading}
+              onSignIn={() => setIsSignInOpen(true)}
+              onSignUp={() => setIsSignUpOpen(true)}
+              onRequestAccess={() => navigate("/role-request")}
+              onSearch={handleLandingSearch}
+              onGoToSearch={() => navigate("/search")}
+            />
+          }
+        />
+        <Route path="/search" element={
+          <Page
+            results={results}
+            hasSearched={hasSearched}
+            setHasSearched={setHasSearched}
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
+            searchResume={searchResume}
+            page={page}
+            total={total}
+            pageSize={PAGE_SIZE}
+            onPageChange={handlePageChange}
+          />
+        }/>
+        <Route path="/role-request" element={<RoleRequest />} />
+        <Route path="/admin/role-requests" element={<AdminRoleRequests />} />
+        <Route
+          path="/edit-profile"
+          element={
+            <ProtectedRoute
+              user={user}
+              loading={isUserLoading}
+            >
+              <EditProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-resumes"
+          element={
+            <ProtectedRoute user={user} loading={isUserLoading}>
+              <MyResumes
+                onLogout={handleLogout}
+                onUploadClick={() => setIsUploadOpen(true)}
+              />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+      <main>
+      </main>
+    </div>
+  )
+}
+
+export default App

@@ -1,0 +1,187 @@
+/* ── Sidebar Shell ─────────────────────────────────────────── */
+.sidebar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  background: #ffffff;
+  border: 1px solid rgba(22, 22, 31, 0.08);
+  border-radius: 16px;
+  padding: 18px 16px 16px;
+  box-shadow: 0 4px 16px rgba(22, 22, 31, 0.05);
+
+  align-self: start;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(22, 22, 31, 0.08);
+}
+
+.filter-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Sora", "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #16161f;
+  letter-spacing: -0.01em;
+}
+
+.filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #e9295f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.filter-clear-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e9295f;
+  cursor: pointer;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.filter-clear-link:hover {
+  color: #c21f4d;
+  text-decoration: underline;
+}
+
+.filter-clear-link:disabled {
+  color: #b5b7c2;
+  cursor: default;
+  text-decoration: none;
+}
+
+/* ── Section ───────────────────────────────────────────────── */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(22, 22, 31, 0.06);
+}
+
+.filter-section-title {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8b8e9c;
+}
+
+/* ── Checkbox Items ────────────────────────────────────────── */
+.item-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3b3d4a;
+  user-select: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.filter-label:hover {
+  background: #f6f6f9;
+}
+
+.filter-label.active {
+  background: #fde7ee;
+  color: #c21f4d;
+  font-weight: 600;
+}
+
+/* ── Custom Checkbox ───────────────────────────────────────── */
+.checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border: 1.5px solid #cfd1da;
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.checkbox:hover {
+  border-color: #e9295f;
+}
+
+.checkbox:checked {
+  background: #e9295f;
+  border-color: #e9295f;
+}
+
+.checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 4.5px;
+  top: 1.5px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px #fde7ee;
+}
+
+/* ── Apply Button ──────────────────────────────────────────── */
+.apply-btn {
+  width: 100%;
+  height: 38px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 999px;
+  background: #e9295f;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.apply-btn:hover {
+  background: #c21f4d;
+}
+
+.apply-btn:active {
+  transform: scale(0.97);
+}
