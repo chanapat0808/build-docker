@@ -3,7 +3,7 @@ pipeline {
 
 
     // environment {
-    //     DOCKERHUB = credential
+        
     // }
     // withCredentials([
     //     usernamePassword(
@@ -18,7 +18,7 @@ pipeline {
         stage('test'){
             agent {
                 docker {
-                    image "node:20-alpine"; reuseNode true
+                    image "node:22-alpine"; reuseNode true
                 }
             }
             steps{
@@ -35,7 +35,7 @@ pipeline {
             steps{
                 sh '''
                 cd frontend
-                docker build -t test_image -f frontend/Dockerfile
+                docker build -t test_image .
                 '''
             }
         }
