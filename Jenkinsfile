@@ -25,7 +25,7 @@ pipeline {
                 sh ''' 
                 cd frontend
                 npm ci
-                npm run dev
+                npm run test
                 echo "TEST ALREADY"
                 '''
             }
