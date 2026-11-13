@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMG = "my-test-app"
         DOCKERHUB = credentials('dockerhub')
+        DOCKER_IMG = "$DOCKERHUB/my-test-app"
     }
 
 
@@ -49,7 +49,7 @@ pipeline {
             steps{
                 sh '''
                 echo "$DOCKERHUB_PSW" | docker login -u $DOCKERHUB_USR --password-stdin
-                docker push $DOCKERHUB_USR/$DOCKER_IMG:latest
+                docker push $DOCKER_IMG
                 '''
             }
         }
