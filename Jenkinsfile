@@ -49,7 +49,7 @@ pipeline {
             steps{
                 sh '''
                 echo "$DOCKERHUB_PSW" | docker login -u $DOCKERHUB_USR --password-stdin
-                docker push $DOCKER_IMG:latest
+                docker push $DOCKERHUB_USR/$DOCKER_IMG:latest
                 '''
             }
         }
