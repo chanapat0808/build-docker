@@ -8,12 +8,12 @@ pipeline {
     environment {
         DOCKER_IMG = "TEST_IMAGE"
         
-        withCredentials({
+        withCredentials([
         usernamePassword(
         credentialsId: 'dockerhub',
         usernameVariable: 'DOCKER_USERNAME',
         passwordVariable: 'DOCKER_PASSWORD')
-    })
+    ])
     }
     
     stages{
